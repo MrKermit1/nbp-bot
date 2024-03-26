@@ -11,7 +11,7 @@ const client = new Client({
     ]
 })
 
-const walutyApi = 'https://api.nbp.pl/api/exchangerates/tables/a/?format=json'
+const walutyApi = 'https://api.nbp.pl/api/exchangerates/tables/c/?format=json'
 
 
 client.on('ready', (c) => {
@@ -22,11 +22,9 @@ client.on('messageCreate', (m) => {
     if (m.author.bot) {
         return;
     }
-
-    if (m.content === 'kocham glapinskiego') {
-        m.reply('ja też')
-    }
 })
+
+const apiTab = [];
 
 client.on('interactionCreate', (i) => {
     if (!i.isChatInputCommand()) {
@@ -35,19 +33,25 @@ client.on('interactionCreate', (i) => {
 
     if (i.commandName === 'waluty') {
         
-        fetch('https://api.nbp.pl/api/exchangerates/tables/a/?format=json')
+        fetch('https://api.nbp.pl/api/exchangerates/tables/c/?format=json')
         .then(res => res.json())
         .then((data) => {
-            console.log(data[0].rates[0])
-            //i.reply(JSON.stringify(data[0].rates[0]))
-            let tab = data[0].rates;
-            let msg = "";
-            for (let i = 0; i < tab.length; i++) {
-                msg += "\r" + JSON.stringify(tab[i])
+            for (let i = 0; i < data[0].rates.length; i++) {
+                apiTab.push(data[0].rates[i]);
+            }
+            
+            const valCode = i.options.get('kod-waluty')
+            
+            const output = apiTab.find((element) => element.code == valCode.value.toUpperCase())
+
+            if (!output) {
+                i.reply("coś ci się pomyliło")
+                return;
             }
 
-            i.reply(msg);
-            console.log(msg)
+            console.log(output)
+
+            i.reply(`Nazwa: ${output.currency}\rKupno: ${output.bid} PLN\rSprzedaż: ${output.ask} PLN`)
 
         })
         .catch(err => console.log(err))
