@@ -1,10 +1,18 @@
 require('dotenv').config()
-const { REST, Routes } = require('discord.js')
+const { REST, Routes, ApplicationCommandOptionType } = require('discord.js')
 
 const commands = [
     {
         name: 'waluty',
-        description: 'o to waluty'
+        description: 'kurs wybranej waluty',
+        options: [
+            {
+                name: 'kod-waluty',
+                description: 'skrót waluty',
+                type: ApplicationCommandOptionType.String,
+                required: true,
+            }
+        ]
     },
 ]
 
