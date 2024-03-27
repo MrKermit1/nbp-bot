@@ -2,6 +2,25 @@ require('dotenv').config()
 
 const { Client, IntentsBitField } = require('discord.js')
 
+let apiData;
+let apiTab = []
+let codeTab = []
+fetch('https://api.nbp.pl/api/exchangerates/tables/c/?format=json')
+        .then(res => res.json())
+        .then((data) => {
+
+            apiData = data[0].rates
+
+            apiData.forEach(element => {
+                apiTab.push(element)
+            });
+
+            apiData.forEach(element => {
+                codeTab.push(`Waluta: ${element.currency}\rSkrót: ${element.code}\r`)
+            });
+
+        })
+
 const client = new Client({
     intents: [
         IntentsBitField.Flags.Guilds,
@@ -24,7 +43,7 @@ client.on('messageCreate', (m) => {
     }
 })
 
-const apiTab = [];
+
 
 client.on('interactionCreate', (i) => {
     if (!i.isChatInputCommand()) {
@@ -32,30 +51,30 @@ client.on('interactionCreate', (i) => {
     }
 
     if (i.commandName === 'waluty') {
+        //const element = apiData[i];
+        const valCode = i.options.get('kod-waluty')
         
-        fetch('https://api.nbp.pl/api/exchangerates/tables/c/?format=json')
-        .then(res => res.json())
-        .then((data) => {
-            for (let i = 0; i < data[0].rates.length; i++) {
-                apiTab.push(data[0].rates[i]);
-            }
+        const output = apiTab.find((element) => element.code == valCode.value.toUpperCase())
+        console.log(apiTab)
+        i.reply(`Nazwa: ${output.currency}\rKupno: ${output.bid} PLN\rSprzedaż: ${output.ask} PLN`)
+        
+
+    }
+
+    if (i.commandName ==='jakie-sa-kody') {
+        let msg = "";
+
+        if ((i.options.get('nazwa-wauty'))) {
             
-            const valCode = i.options.get('kod-waluty')
-            
-            const output = apiTab.find((element) => element.code == valCode.value.toUpperCase())
+            //trzeba pomyśleć
 
-            if (!output) {
-                i.reply("coś ci się pomyliło")
-                return;
-            }
+        }else{
+            codeTab.forEach((element) => {
+                msg += element
+            })
 
-            console.log(output)
-
-            i.reply(`Nazwa: ${output.currency}\rKupno: ${output.bid} PLN\rSprzedaż: ${output.ask} PLN`)
-
-        })
-        .catch(err => console.log(err))
-
+            i.reply(msg);
+        }
     }
 })
 
