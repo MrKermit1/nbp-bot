@@ -14,6 +14,18 @@ const commands = [
             }
         ]
     },
+    {
+        name: 'jakie-sa-kody',
+        description: 'zwraca skróty dostępnych walut',
+        options:[
+            {
+                name: 'nazwa-waluty',
+                description: 'pełna nazwa waluty',
+                type: ApplicationCommandOptionType.String,
+                required: false,
+            }
+        ]
+    }
 ]
 
 const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
