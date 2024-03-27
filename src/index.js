@@ -64,17 +64,11 @@ client.on('interactionCreate', (i) => {
     if (i.commandName ==='jakie-sa-kody') {
         let msg = "";
 
-        if ((i.options.get('nazwa-wauty'))) {
-            
-            //trzeba pomyśleć
+        codeTab.forEach((element) => {
+            msg += element
+        })
+        i.reply(msg);
 
-        }else{
-            codeTab.forEach((element) => {
-                msg += element
-            })
-
-            i.reply(msg);
-        }
     }
 })
 
